@@ -1,3 +1,7 @@
+CREATE DATABASE IF NOT EXISTS issue_reporting;
+
+-- Use the database
+USE issue_reporting;
 CREATE TABLE issues (
     id INT AUTO_INCREMENT PRIMARY KEY,
     image VARCHAR(255) NOT NULL,
