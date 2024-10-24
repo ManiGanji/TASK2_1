@@ -89,7 +89,7 @@
 </head>
 <body>
     <h2>Issue Reporting Form</h2>
-    <form id="issueForm" action="connect.php" method="post">
+    <form id="issueForm" action="connect.php" method="post" enctype="multipart/form-data">
         <label for="image">Image:</label>
         <input type="file" id="image" accept="image/*" name="imagePreview">
         <span id="imageError" class="error">This field is required.</span>
@@ -130,6 +130,36 @@
             </tr>
         </thead>
         <tbody>
+            <?php
+                // Database connection
+                $conn = new mysqli("localhost", "root", "", "snag_tracker");
+                if ($conn->connect_error) {
+                    die("Connection failed: " . $conn->connect_error);
+                }
+
+                // Fetch data from the database
+                $result = $conn->query("SELECT * FROM `snags`;");
+                if ($result->num_rows > 0) {
+                    while ($row = $result->fetch_assoc()) {
+                        echo '<tr>
+                            <td>'.$row['id'].'</td>
+                            <td><img src="http://localhost/TASK2_1-MAIN/uploads/'.$row['image_path'].'"></td>
+                            <td>'.$row['description'].'</td>
+                            <td>'.$row['location'].'</td>
+                            <td>'.$row['priority'].'</td>
+                            <td>'.$row['status'].'</td>
+                            <td>'.$row['date_reported'].'</td>
+                            <td>'.$row['assigned_to'].'</td>
+                            <td>
+                                <a href="edit.php?id='.$row['id'].'">Edit</a> | 
+                                <a href="delete.php?id='.$row['id'].'">Delete</a>
+                            </td>
+                        </tr>';
+                    }
+                } else {
+                    echo "<tr><td colspan='9'>No issues found</td></tr>";
+                }
+            ?>
         </tbody>
     </table>
 
@@ -142,8 +172,7 @@
             form.addEventListener('submit', function (e) {
                 e.preventDefault();
                 if (validateForm()) {
-                    addIssueToTable();
-                    form.reset();
+                    form.submit();
                 }
             });
 
@@ -164,59 +193,6 @@
                 });
 
                 return isValid;
-            }
-
-            function addIssueToTable() {
-                const row = table.insertRow();
-                
-                // ID
-                const idCell = row.insertCell();
-                idCell.textContent = issueId++;
-
-                // Image Preview
-                const imageCell = row.insertCell();
-                const imageInput = document.getElementById('image');
-                const imagePreview = document.createElement('img');
-                imagePreview.src = URL.createObjectURL(imageInput.files[0]);
-                imageCell.appendChild(imagePreview);
-
-                // Description
-                const descriptionCell = row.insertCell();
-                const descriptionInput = document.getElementById('description');
-                descriptionCell.textContent = descriptionInput.value;
-
-                // Location (Assumed static or entered manually)
-                const locationCell = row.insertCell();
-                locationCell.textContent = "Not Provided"; // This can be dynamic if required
-
-                // Priority
-                const priorityCell = row.insertCell();
-                const priorityInput = document.getElementById('priority');
-                priorityCell.textContent = priorityInput.value;
-
-                // Status (Set default to 'Pending')
-                const statusCell = row.insertCell();
-                statusCell.textContent = "Pending";
-
-                // Date Reported (Current Date)
-                const dateReportedCell = row.insertCell();
-                const currentDate = new Date().toLocaleDateString();
-                dateReportedCell.textContent = currentDate;
-
-                // Assigned To
-                const assignedToCell = row.insertCell();
-                const assignedToInput = document.getElementById('assignedTo');
-                assignedToCell.textContent = assignedToInput.value;
-
-                // Actions (Edit/Delete buttons)
-                const actionsCell = row.insertCell();
-                const deleteButton = document.createElement('button');
-                deleteButton.textContent = 'Delete';
-                deleteButton.className = 'btn btn-danger'; // Bootstrap danger class
-                deleteButton.addEventListener('click', function () {
-                    table.deleteRow(row.rowIndex - 1);
-                });
-                actionsCell.appendChild(deleteButton);
             }
         });
     </script>
