@@ -89,29 +89,29 @@
 </head>
 <body>
     <h2>Issue Reporting Form</h2>
-    <form id="issueForm" action="submit_issue.php" method="POST" enctype="multipart/form-data">
+    <form id="issueForm" action="connect.php" method="post">
         <label for="image">Image:</label>
-        <input type="file" id="image" name="image" accept="image/*" required>
+        <input type="file" id="image" accept="image/*" name="imagePreview">
         <span id="imageError" class="error">This field is required.</span>
 
         <label for="description">Description:</label>
-        <textarea id="description" name="description" required></textarea>
+        <input type="text" id="description" required name="descriptionData">
         <span id="descriptionError" class="error">This field is required.</span>
 
         <label for="priority">Priority:</label>
         <select id="priority" name="priority" required>
-            <option value="">Select</option>
-            <option value="Low">Low</option>
-            <option value="Medium">Medium</option>
-            <option value="High">High</option>
+            <option value="" >Select</option>
+            <option value="Low" name="low">Low</option>
+            <option value="Medium" name="medium">Medium</option>
+            <option value="High" name="high">High</option>
         </select>
         <span id="priorityError" class="error">This field is required.</span>
 
         <label for="assignedTo">Assigned To:</label>
-        <input type="text" id="assignedTo" name="assignedTo" required>
+        <input type="text" id="assignedTo" required name="assignedTo">
         <span id="assignedToError" class="error">This field is required.</span>
 
-        <button type="submit">Submit</button>
+        <button type="submit" name="stmt">Submit</button>
     </form>
 
     <h2>Reported Issues</h2>
@@ -166,4 +166,59 @@
                 return isValid;
             }
 
-            function addIssue
+            function addIssueToTable() {
+                const row = table.insertRow();
+                
+                // ID
+                const idCell = row.insertCell();
+                idCell.textContent = issueId++;
+
+                // Image Preview
+                const imageCell = row.insertCell();
+                const imageInput = document.getElementById('image');
+                const imagePreview = document.createElement('img');
+                imagePreview.src = URL.createObjectURL(imageInput.files[0]);
+                imageCell.appendChild(imagePreview);
+
+                // Description
+                const descriptionCell = row.insertCell();
+                const descriptionInput = document.getElementById('description');
+                descriptionCell.textContent = descriptionInput.value;
+
+                // Location (Assumed static or entered manually)
+                const locationCell = row.insertCell();
+                locationCell.textContent = "Not Provided"; // This can be dynamic if required
+
+                // Priority
+                const priorityCell = row.insertCell();
+                const priorityInput = document.getElementById('priority');
+                priorityCell.textContent = priorityInput.value;
+
+                // Status (Set default to 'Pending')
+                const statusCell = row.insertCell();
+                statusCell.textContent = "Pending";
+
+                // Date Reported (Current Date)
+                const dateReportedCell = row.insertCell();
+                const currentDate = new Date().toLocaleDateString();
+                dateReportedCell.textContent = currentDate;
+
+                // Assigned To
+                const assignedToCell = row.insertCell();
+                const assignedToInput = document.getElementById('assignedTo');
+                assignedToCell.textContent = assignedToInput.value;
+
+                // Actions (Edit/Delete buttons)
+                const actionsCell = row.insertCell();
+                const deleteButton = document.createElement('button');
+                deleteButton.textContent = 'Delete';
+                deleteButton.className = 'btn btn-danger'; // Bootstrap danger class
+                deleteButton.addEventListener('click', function () {
+                    table.deleteRow(row.rowIndex - 1);
+                });
+                actionsCell.appendChild(deleteButton);
+            }
+        });
+    </script>
+</body>
+</html>
