@@ -1,8 +1,11 @@
 <?php
     // Database connection
-    $conn = new mysqli("localhost", "root", "", "snag_tracker");
-    if ($conn->connect_error) {
-        die("Connection failed: " . $conn->connect_error);
+    $conn = new mysqli("localhost", "root", "admin123", "snag_tracker");
+    if ($conn){
+        echo "connected";
+    
+    }else{
+        die("connection failed".$conn->connect_error);
     }
 
     // Check if form was submitted

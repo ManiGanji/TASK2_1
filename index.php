@@ -132,7 +132,7 @@
         <tbody>
             <?php
                 // Database connection
-                $conn = new mysqli("localhost", "root", "", "snag_tracker");
+                $conn = new mysqli("localhost", "root", "admin123", "snag_tracker");
                 if ($conn->connect_error) {
                     die("Connection failed: " . $conn->connect_error);
                 }
